@@ -4,6 +4,7 @@ rule = To_1_0_0
 package fix
 
 import endpoints.algebra.Endpoints
+import endpoints.algebra.Codec
 
 trait MyEndpoints extends Endpoints with endpoints.algebra.JsonEntities {
   val foo = endpoint(

@@ -13,9 +13,24 @@ class To_1_0_0 extends SemanticRule("To_1_0_0") {
 
   def updateEndpointsPackage(implicit doc: SemanticDocument): Patch = {
     val endpointsPackage = SymbolMatcher.exact("endpoints/")
+    val codecSymbol = SymbolMatcher.normalized("endpoints/algebra/Codec")
+    (doc.tree.collect {
+      case importee @ Importee.Name(codecSymbol(Name(_))) =>
+        Patch.removeImportee(importee) +
+        Patch.addGlobalImport(importer"endpoints4s.Codec")
+    } ++
     doc.tree.collect {
-      case endpointsPackage(tree @ Name(_)) => Patch.replaceTree(tree, "endpoints4s")
-    }.asPatch
+      case endpointsPackage(tree @ Name(_)) =>
+        if (tree.parent.flatMap(_.parent).exists {
+          case Importer(_, List(Importee.Name(Name.Indeterminate("Codec")))) => true
+          case _ => false
+        }) {
+          // This case has already been handled by the previous patch
+          Patch.empty
+        } else {
+          Patch.replaceTree(tree, "endpoints4s")
+        }
+    }).asPatch
   }
 
   def updateEndpointDocsConstructor(implicit doc: SemanticDocument): Patch = {

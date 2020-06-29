@@ -1,6 +1,7 @@
 package fix
 
 import endpoints4s.algebra.Endpoints
+import endpoints4s.Codec
 import endpoints4s.algebra.Tag
 
 trait MyEndpoints extends Endpoints with endpoints4s.algebra.JsonEntities {
