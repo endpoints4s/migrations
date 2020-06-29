@@ -1,4 +1,7 @@
+import xerial.sbt.Sonatype._
+
 lazy val V = _root_.scalafix.sbt.BuildInfo
+
 inThisBuild(
   List(
     organization := "org.endpoints4s",
@@ -25,7 +28,9 @@ skip in publish := true
 
 lazy val `to-1_0_0-rules` = project.in(file("to-1.0.0/rules")).settings(
   name := "to-1.0.0",
-  libraryDependencies += "ch.epfl.scala" %% "scalafix-core" % V.scalafixVersion
+  libraryDependencies += "ch.epfl.scala" %% "scalafix-core" % V.scalafixVersion,
+  publishTo := sonatypePublishTo.value,
+  sonatypeProjectHosting := Some(GitHubHosting("endpoints4s", "endpoints4s", "julien@richard-foy.fr"))
 )
 
 lazy val `to-1_0_0-input` = project.in(file("to-1.0.0/input")).settings(
@@ -35,7 +40,9 @@ lazy val `to-1_0_0-input` = project.in(file("to-1.0.0/input")).settings(
 )
 
 lazy val `to-1_0_0-output` = project.in(file("to-1.0.0/output")).settings(
-  skip in publish := true
+  skip in publish := true,
+  libraryDependencies += "org.endpoints4s" %% "algebra" % "1.0.0",
+  sbtPlugin := true
 )
 
 lazy val `to-1_0_0-tests` = project.in(file("to-1.0.0/tests"))
@@ -53,3 +60,5 @@ lazy val `to-1_0_0-tests` = project.in(file("to-1.0.0/tests"))
   )
   .dependsOn(`to-1_0_0-rules`)
   .enablePlugins(ScalafixTestkitPlugin)
+
+Global / onChangedBuildSource := ReloadOnSourceChanges
